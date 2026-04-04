@@ -1,0 +1,92 @@
+.buzzerWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.buzzer {
+  width: min(280px, 60vw);
+  height: min(280px, 60vw);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: white;
+  position: relative;
+  transition: transform var(--transition-spring);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  box-shadow: 0 0 40px var(--glow-color, rgba(233, 69, 96, 0.3));
+}
+
+.buzzer:active {
+  transform: scale(0.92);
+}
+
+.buzzer.pressed {
+  animation: buzzerPulse 400ms ease-out;
+}
+
+@keyframes buzzerPulse {
+  0% {
+    transform: scale(0.92);
+    box-shadow: 0 0 40px var(--glow-color, rgba(233, 69, 96, 0.3));
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 80px var(--glow-color, rgba(233, 69, 96, 0.5));
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 40px var(--glow-color, rgba(233, 69, 96, 0.3));
+  }
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  animation: rippleExpand 600ms ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes rippleExpand {
+  0% {
+    width: 60%;
+    height: 60%;
+    opacity: 1;
+  }
+  100% {
+    width: 140%;
+    height: 140%;
+    opacity: 0;
+  }
+}
+
+.counter {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.counterNumber {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* Multi-person layout */
+.buzzerSmall {
+  width: min(160px, 40vw);
+  height: min(160px, 40vw);
+  font-size: var(--font-size-lg);
+}
+
+.buzzerSmall .ripple {
+  border-width: 1px;
+}

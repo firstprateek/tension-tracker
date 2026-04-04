@@ -1,0 +1,121 @@
+.container {
+  padding: var(--space-lg);
+  padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + var(--space-lg));
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+
+.weekLabel {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  text-align: center;
+}
+
+.navBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: var(--space-sm);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.navBtn:disabled {
+  opacity: 0.3;
+}
+
+.section {
+  margin-bottom: var(--space-xl);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-md);
+}
+
+.statsRow {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.tagBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.tagName {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  min-width: 60px;
+}
+
+.tagBarFill {
+  height: 20px;
+  border-radius: 4px;
+  background: var(--color-accent);
+  opacity: 0.7;
+  transition: width var(--transition-normal);
+}
+
+.tagCount {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  min-width: 24px;
+}
+
+.reviewBanner {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--color-accent);
+}
+
+.reviewBannerText {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-2xl);
+}
+
+.personToggle {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.personBtn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-text-muted);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.personBtn.active {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: white;
+}

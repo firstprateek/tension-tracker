@@ -1,0 +1,55 @@
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.tag {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-text-muted);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tag.selected {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.addTagRow {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.addTagInput {
+  flex: 1;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-text-muted);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  outline: none;
+}
+
+.addTagInput:focus {
+  border-color: var(--color-accent);
+}
+
+.addTagBtn {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//private/tmp/**)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Bash(node -e \":*)",
+      "Bash(ls -la public/*.png)",
+      "Bash(kill %1)"
+    ]
+  }
+}

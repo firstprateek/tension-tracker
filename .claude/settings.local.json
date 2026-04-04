@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/padi/Documents/projects/ai-projects/tension-tracker -name .* -o -name *)",
+      "Bash(npm create:*)"
+    ]
+  }
+}
