@@ -101,7 +101,19 @@
 .empty {
   text-align: center;
   color: var(--color-text-muted);
-  padding: var(--space-2xl);
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+.emptyHeadline {
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+
+.emptySub {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
 }
 
 .personToggle {

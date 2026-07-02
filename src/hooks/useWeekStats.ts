@@ -2,6 +2,23 @@ import { useMemo } from 'preact/hooks'
 import type { TensionEvent } from '../db/index.ts'
 import { getWeekBounds } from '../lib/week.ts'
 
+/**
+ * Week-over-week comparison line for a rate metric. Lower tension is
+ * better, so a drop is "good". Returns undefined when there is no
+ * meaningful baseline.
+ */
+export function formatTrend(
+  current: number,
+  previous: number,
+): { text: string; good: boolean } | undefined {
+  if (!Number.isFinite(current) || !Number.isFinite(previous) || previous <= 0) return undefined
+  const pct = Math.round(((current - previous) / previous) * 100)
+  if (pct === 0) return { text: '≈ same as last week', good: true }
+  return pct < 0
+    ? { text: `↓ ${Math.abs(pct)}% vs last week`, good: true }
+    : { text: `↑ ${pct}% vs last week`, good: false }
+}
+
 export interface DayCount {
   day: string
   count: number

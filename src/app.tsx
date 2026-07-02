@@ -12,6 +12,7 @@ type AppView = Route | 'review'
 
 export function App() {
   const [view, setView] = useState<AppView>('buzzer')
+  const [statsWeek, setStatsWeek] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -22,6 +23,7 @@ export function App() {
   }, [])
 
   const handleNavigate = useCallback((route: Route) => {
+    setStatsWeek(null)
     setView(route)
   }, [])
 
@@ -33,14 +35,26 @@ export function App() {
     setView('buzzer')
   }, [])
 
+  // Journal cards deep-link into that week's stats.
+  const handleOpenWeek = useCallback((weekId: string) => {
+    setStatsWeek(weekId)
+    setView('stats')
+  }, [])
+
   if (!ready) return null
 
   return (
     <>
       {view === 'buzzer' && <BuzzerView />}
-      {view === 'stats' && <StatsView onNavigateReview={handleNavigateReview} />}
+      {view === 'stats' && (
+        <StatsView
+          key={statsWeek ?? 'current'}
+          initialWeekId={statsWeek ?? undefined}
+          onNavigateReview={handleNavigateReview}
+        />
+      )}
       {view === 'review' && <ReviewView onDone={handleReviewDone} />}
-      {view === 'journal' && <JournalView />}
+      {view === 'journal' && <JournalView onOpenWeek={handleOpenWeek} />}
       {view === 'settings' && <SettingsView />}
       {/* The review is a focused full-screen flow — no tab bar, so no
           falsely-highlighted tab and no accidental mid-review exits. */}

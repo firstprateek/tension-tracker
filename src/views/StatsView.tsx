@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'preact/hooks'
 import { StatCard } from '../components/StatCard.tsx'
 import { WeekChart } from '../components/WeekChart.tsx'
 import { useWeekEvents } from '../hooks/useWeekEvents.ts'
-import { useWeekStats } from '../hooks/useWeekStats.ts'
+import { useWeekStats, formatTrend } from '../hooks/useWeekStats.ts'
 import { usePersons } from '../hooks/usePersons.ts'
 import { useCurrentWeekId } from '../hooks/useCurrentWeekId.ts'
 import { getPreviousWeekId, getNextWeekId, formatWeekRange } from '../lib/week.ts'
@@ -12,11 +12,12 @@ import styles from './StatsView.module.css'
 
 interface StatsViewProps {
   onNavigateReview?: () => void
+  initialWeekId?: string
 }
 
-export function StatsView({ onNavigateReview }: StatsViewProps) {
+export function StatsView({ onNavigateReview, initialWeekId }: StatsViewProps) {
   const currentWeekId = useCurrentWeekId()
-  const [weekId, setWeekId] = useState(currentWeekId)
+  const [weekId, setWeekId] = useState(initialWeekId ?? currentWeekId)
   const [personFilter, setPersonFilter] = useState<string | null>(null)
   const events = useWeekEvents(weekId)
   const persons = usePersons()
@@ -33,9 +34,26 @@ export function StatsView({ onNavigateReview }: StatsViewProps) {
     weekId,
   )
 
+  // Previous week, same person filter — for the week-over-week trend.
+  const prevWeekId = getPreviousWeekId(weekId)
+  const prevEvents = useWeekEvents(prevWeekId)
+  const prevStats = useWeekStats(
+    personFilter ? prevEvents.filter((e) => e.personId === personFilter) : prevEvents,
+    prevWeekId,
+  )
+  const trend =
+    stats.totalEvents > 0 ? formatTrend(stats.tensionPerHour, prevStats.tensionPerHour) : undefined
+
+  const peakDay = stats.dailyCounts.reduce(
+    (best, d) => (d.count > best.count ? d : best),
+    stats.dailyCounts[0],
+  )
+
   const review = useLiveQuery(() => db.reviews.get(weekId), [weekId], undefined)
   const isCurrentWeek = weekId === currentWeekId
-  const showReviewBanner = isCurrentWeek && !review?.completedAt
+  // Persistent entry point: invite a review once there is something to
+  // review, and allow editing after completion.
+  const showReviewBanner = isCurrentWeek && events.length > 0
 
   const handlePrev = useCallback(() => setWeekId((w) => getPreviousWeekId(w)), [])
   const handleNext = useCallback(() => {
@@ -80,11 +98,21 @@ export function StatsView({ onNavigateReview }: StatsViewProps) {
       )}
 
       {events.length === 0 ? (
-        <div class={styles.empty}>No tension events this week. Keep going!</div>
+        <div class={styles.empty}>
+          <div class={styles.emptyHeadline}>No tensions logged this week</div>
+          <div class={styles.emptySub}>
+            Tap the Buzzer whenever you feel tension — your patterns will build up here.
+          </div>
+        </div>
       ) : (
         <>
           <div class={styles.statsRow}>
-            <StatCard label="Tension / Hour" value={stats.tensionPerHour.toFixed(2)} sub={`${stats.totalEvents} total`} />
+            <StatCard
+              label="Tensions"
+              value={String(stats.totalEvents)}
+              sub={peakDay.count > 0 ? `Peak day: ${peakDay.day}` : undefined}
+            />
+            <StatCard label="Tension / Hour" value={stats.tensionPerHour.toFixed(2)} trend={trend} />
           </div>
 
           <div class={styles.section}>
@@ -112,7 +140,9 @@ export function StatsView({ onNavigateReview }: StatsViewProps) {
 
       {showReviewBanner && onNavigateReview && (
         <button class={styles.reviewBanner} onClick={onNavigateReview}>
-          <span class={styles.reviewBannerText}>Time to review your week</span>
+          <span class={styles.reviewBannerText}>
+            {review?.completedAt ? 'Edit this week’s review' : 'Time to review your week'}
+          </span>
         </button>
       )}
     </div>

@@ -5,7 +5,11 @@ import { usePersons } from '../hooks/usePersons.ts'
 import { formatWeekRange } from '../lib/week.ts'
 import styles from './JournalView.module.css'
 
-export function JournalView() {
+interface JournalViewProps {
+  onOpenWeek?: (weekId: string) => void
+}
+
+export function JournalView({ onOpenWeek }: JournalViewProps) {
   const reviews = useLiveQuery(
     () => db.reviews.toArray().then((r) => r.filter((rev) => rev.completedAt).sort((a, b) => b.weekId.localeCompare(a.weekId))),
     [],
@@ -44,10 +48,17 @@ export function JournalView() {
             .slice(0, 5)
 
           return (
-            <div class={styles.reviewCard} key={review.weekId}>
+            <button
+              class={styles.reviewCard}
+              key={review.weekId}
+              onClick={() => onOpenWeek?.(review.weekId)}
+              aria-label={`Open stats for ${formatWeekRange(review.weekId)}`}
+            >
               <div class={styles.reviewHeader}>
                 <span class={styles.weekLabel}>{formatWeekRange(review.weekId)}</span>
-                <span class={styles.eventCount}>{totalEvents} event{totalEvents !== 1 ? 's' : ''}</span>
+                <span class={styles.eventCount}>
+                  {totalEvents} event{totalEvents !== 1 ? 's' : ''} ›
+                </span>
               </div>
 
               {review.personSummaries.length > 1 && (
@@ -78,7 +89,7 @@ export function JournalView() {
                   <div class={styles.countermeasuresText}>{review.countermeasures}</div>
                 </>
               )}
-            </div>
+            </button>
           )
         })
       )}

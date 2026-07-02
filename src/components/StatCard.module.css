@@ -23,3 +23,17 @@
   color: var(--color-text-muted);
   margin-top: var(--space-xs);
 }
+
+.trend {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin-top: var(--space-xs);
+}
+
+.trendGood {
+  color: var(--color-success);
+}
+
+.trendBad {
+  color: var(--color-accent-text);
+}

@@ -1,12 +1,12 @@
-import { useState, useCallback } from 'preact/hooks'
+import { useState, useCallback, useEffect } from 'preact/hooks'
 import { StatCard } from '../components/StatCard.tsx'
 import { WeekChart } from '../components/WeekChart.tsx'
 import { useWeekEvents } from '../hooks/useWeekEvents.ts'
-import { useWeekStats } from '../hooks/useWeekStats.ts'
+import { useWeekStats, computeWeekStats, formatTrend } from '../hooks/useWeekStats.ts'
 import { usePersons } from '../hooks/usePersons.ts'
-import { getCurrentWeekId, formatWeekRange } from '../lib/week.ts'
-import { saveReview } from '../db/reviews.ts'
-import { computeWeekStats } from '../hooks/useWeekStats.ts'
+import { useLiveQuery } from '../hooks/useLiveQuery.ts'
+import { getCurrentWeekId, getPreviousWeekId, formatWeekRange } from '../lib/week.ts'
+import { getReview, saveReview } from '../db/reviews.ts'
 import styles from './ReviewView.module.css'
 
 interface ReviewViewProps {
@@ -23,7 +23,31 @@ export function ReviewView({ onDone }: ReviewViewProps) {
   const [step, setStep] = useState(0)
   const [countermeasures, setCountermeasures] = useState('')
 
-  const recurringThemes = stats.tagCounts.filter((t) => t.count >= 2)
+  // Editing an existing review must not silently wipe prior reflection.
+  useEffect(() => {
+    getReview(weekId).then((existing) => {
+      if (existing?.countermeasures) setCountermeasures(existing.countermeasures)
+    })
+  }, [weekId])
+
+  // Week-over-week context.
+  const prevWeekId = getPreviousWeekId(weekId)
+  const prevEvents = useWeekEvents(prevWeekId)
+  const prevStats = useWeekStats(prevEvents, prevWeekId)
+  const trend = stats.totalEvents > 0 ? formatTrend(stats.tensionPerHour, prevStats.tensionPerHour) : undefined
+
+  // "Recurring" = frequent this week, or carried over from last week's review.
+  const prevReview = useLiveQuery(() => getReview(prevWeekId), [prevWeekId], undefined)
+  const prevTagSet = new Set(
+    (prevReview?.personSummaries ?? []).flatMap((ps) => ps.topTags.map((t) => t.tag)),
+  )
+  const recurringThemes = stats.tagCounts.filter((t) => t.count >= 2 || prevTagSet.has(t.tag))
+
+  // The user's own words are the best reflection prompt.
+  const recentNotes = events
+    .filter((e) => e.note)
+    .sort((a, b) => b.timestamp - a.timestamp)
+    .slice(0, 5)
 
   const handleComplete = useCallback(async () => {
     const personSummaries = persons.map((p) => {
@@ -60,7 +84,12 @@ export function ReviewView({ onDone }: ReviewViewProps) {
             <p style={{ color: 'var(--color-text-muted)', marginBottom: 'var(--space-lg)' }}>
               {formatWeekRange(weekId)}
             </p>
-            <StatCard label="Tension / Hour" value={stats.tensionPerHour.toFixed(2)} sub={`${stats.totalEvents} events`} />
+            <StatCard
+              label="Tension / Hour"
+              value={stats.tensionPerHour.toFixed(2)}
+              sub={`${stats.totalEvents} events`}
+              trend={trend}
+            />
             <div style={{ marginTop: 'var(--space-lg)' }}>
               <WeekChart dailyCounts={stats.dailyCounts} />
             </div>
@@ -81,13 +110,27 @@ export function ReviewView({ onDone }: ReviewViewProps) {
               recurringThemes.map((t) => (
                 <div class={styles.themeItem} key={t.tag}>
                   <span class={styles.themeName}>{t.tag}</span>
-                  <span class={styles.themeCount}>{t.count}x</span>
+                  <span>
+                    {prevTagSet.has(t.tag) && <span class={styles.themeBadge}>also last week</span>}
+                    <span class={styles.themeCount}>{t.count}x</span>
+                  </span>
                 </div>
               ))
             ) : (
               <p style={{ color: 'var(--color-text-muted)' }}>
                 No recurring themes this week. Try tagging your tensions for better insights.
               </p>
+            )}
+
+            {recentNotes.length > 0 && (
+              <>
+                <p class={styles.notesLabel}>In your words</p>
+                {recentNotes.map((e) => (
+                  <div class={styles.noteItem} key={e.id}>
+                    “{e.note}”
+                  </div>
+                ))}
+              </>
             )}
             <p style={{ color: 'var(--color-text-muted)', marginTop: 'var(--space-lg)' }}>Notice any patterns?</p>
           </div>
