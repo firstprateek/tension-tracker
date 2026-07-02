@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Manual redeploys (e.g. after a transient Pages failure). Re-running a
+  # failed run duplicates the pages artifact — dispatch a fresh run instead.
+  workflow_dispatch:
 
 permissions:
   contents: read
