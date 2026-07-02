@@ -82,6 +82,14 @@ button.buzzer:active {
   color: var(--color-text);
 }
 
+/* Short viewports: shrink so the snackbar never crowds the tap area. */
+@media (max-height: 620px) {
+  .buzzer {
+    width: min(200px, 55vw);
+    height: min(200px, 55vw);
+  }
+}
+
 /* Multi-person layout */
 .buzzerSmall {
   width: min(160px, 40vw);

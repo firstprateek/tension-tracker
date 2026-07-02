@@ -75,7 +75,7 @@
 }
 
 .deleteBtn {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .addBtn {
@@ -164,7 +164,7 @@
 
 .dangerBtn {
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .version {
