@@ -9,10 +9,13 @@ const DEFAULT_PERSON: Person = {
 }
 
 export async function ensureDefaultPerson(): Promise<void> {
-  const count = await db.persons.count()
-  if (count === 0) {
-    await db.persons.add(DEFAULT_PERSON)
-  }
+  // Check-then-add inside a transaction so re-entrant mounts can't double-seed.
+  await db.transaction('rw', db.persons, async () => {
+    const count = await db.persons.count()
+    if (count === 0) {
+      await db.persons.add(DEFAULT_PERSON)
+    }
+  })
 }
 
 export async function getPersons(): Promise<Person[]> {
@@ -33,6 +36,9 @@ export async function updatePerson(id: string, updates: Partial<Pick<Person, 'na
 
 export async function deletePerson(id: string): Promise<void> {
   if (id === 'default') return
-  await db.persons.delete(id)
-  await db.events.where('personId').equals(id).delete()
+  // Atomic cascade: delete events first so a failure never orphans them.
+  await db.transaction('rw', [db.persons, db.events], async () => {
+    await db.events.where('personId').equals(id).delete()
+    await db.persons.delete(id)
+  })
 }

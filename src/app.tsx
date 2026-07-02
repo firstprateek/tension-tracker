@@ -15,7 +15,10 @@ export function App() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    Promise.all([ensureDefaultPerson(), ensureDefaultSettings()]).then(() => setReady(true))
+    Promise.all([ensureDefaultPerson(), ensureDefaultSettings()])
+      .catch((err) => console.error('Failed to seed defaults:', err))
+      // Render regardless — views tolerate missing defaults.
+      .then(() => setReady(true))
   }, [])
 
   const handleNavigate = useCallback((route: Route) => {

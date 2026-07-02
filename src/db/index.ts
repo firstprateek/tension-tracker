@@ -30,8 +30,6 @@ export interface WeeklyReview {
 
 export interface AppSettings {
   key: string
-  weekStartDay: number
-  notificationsEnabled: boolean
   notificationDay: number
   notificationHour: number
   presetTags: string[]

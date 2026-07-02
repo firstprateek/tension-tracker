@@ -4,7 +4,8 @@ import { useSettings } from '../hooks/useSettings.ts'
 import { addPerson, updatePerson, deletePerson } from '../db/persons.ts'
 import { updateSettings } from '../db/settings.ts'
 import { db } from '../db/index.ts'
-import type { TensionEvent, Person, WeeklyReview, AppSettings } from '../db/index.ts'
+import type { Person } from '../db/index.ts'
+import { exportData, importData, type BackupData } from '../lib/backup.ts'
 import styles from './SettingsView.module.css'
 
 const PERSON_COLORS = ['#e94560', '#4a9eff', '#4ade80', '#fbbf24']
@@ -55,13 +56,7 @@ export function SettingsView() {
   }, [newTag, settings.presetTags])
 
   const handleExport = useCallback(async () => {
-    const data = {
-      events: await db.events.toArray(),
-      persons: await db.persons.toArray(),
-      reviews: await db.reviews.toArray(),
-      settings: await db.settings.toArray(),
-      exportedAt: new Date().toISOString(),
-    }
+    const data = await exportData()
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -80,32 +75,11 @@ export function SettingsView() {
       if (!file) return
       try {
         const text = await file.text()
-        const data = JSON.parse(text) as {
-          events?: TensionEvent[]
-          persons?: Person[]
-          reviews?: WeeklyReview[]
-          settings?: AppSettings[]
-        }
-        await db.transaction('rw', [db.events, db.persons, db.reviews, db.settings], async () => {
-          if (data.events) {
-            await db.events.clear()
-            await db.events.bulkAdd(data.events)
-          }
-          if (data.persons) {
-            await db.persons.clear()
-            await db.persons.bulkAdd(data.persons)
-          }
-          if (data.reviews) {
-            await db.reviews.clear()
-            await db.reviews.bulkAdd(data.reviews)
-          }
-          if (data.settings) {
-            await db.settings.clear()
-            await db.settings.bulkAdd(data.settings)
-          }
-        })
+        const data = JSON.parse(text) as BackupData
+        await importData(data)
         alert('Data imported successfully!')
-      } catch {
+      } catch (err) {
+        console.error('Import failed:', err)
         alert('Failed to import data. Please check the file format.')
       }
     }
