@@ -49,11 +49,14 @@ export function TaggingModal({ eventId, onClose }: TaggingModalProps) {
     }
   }, [resetTimer])
 
-  // Move focus into the dialog on open; restore it on close.
+  // Move focus into the dialog on open; restore it on close (only if the
+  // opener still exists — the snackbar button usually doesn't).
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null
     sheetRef.current?.focus()
-    return () => previous?.focus?.()
+    return () => {
+      if (previous?.isConnected) previous.focus()
+    }
   }, [])
 
   // Escape commits and closes; Tab cycles within the sheet.

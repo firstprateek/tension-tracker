@@ -1,4 +1,5 @@
 .container {
+  position: relative;
   padding: var(--space-lg);
   padding-bottom: calc(var(--nav-height) + var(--safe-area-bottom) + var(--space-lg));
   max-width: 500px;
@@ -7,6 +8,19 @@
   min-height: calc(100dvh - var(--nav-height) - var(--safe-area-bottom));
   display: flex;
   flex-direction: column;
+}
+
+.closeBtn {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
 }
 
 .dots {

@@ -110,6 +110,17 @@ describe('ReviewView', () => {
     expect(screen.getByText('“deadline slipped”')).toBeInTheDocument()
   })
 
+  it('can be exited at any step without saving', async () => {
+    const onDone = vi.fn()
+    await addEvent('default')
+    render(<ReviewView onDone={onDone} />)
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Close review without saving' }))
+
+    expect(onDone).toHaveBeenCalled()
+    expect(await db.reviews.get(getCurrentWeekId())).toBeUndefined()
+  })
+
   it('saves the review with Save & Finish', async () => {
     const onDone = vi.fn()
     await addEvent('default')

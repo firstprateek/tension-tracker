@@ -4,7 +4,9 @@ import { TaggingModal } from './TaggingModal.tsx'
 import { usePersons } from '../hooks/usePersons.ts'
 import { useWeekEvents } from '../hooks/useWeekEvents.ts'
 import { useCurrentWeekId } from '../hooks/useCurrentWeekId.ts'
+import { useLiveQuery } from '../hooks/useLiveQuery.ts'
 import { addEvent, deleteEvent } from '../db/events.ts'
+import { db } from '../db/index.ts'
 import styles from './BuzzerView.module.css'
 
 const SNACKBAR_MS = 6_000
@@ -18,7 +20,10 @@ export function BuzzerView() {
   const [lastLoggedId, setLastLoggedId] = useState<string | null>(null)
   const [detailsEventId, setDetailsEventId] = useState<string | null>(null)
   const snackbarTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const hasAnyEvents = events.length > 0
+  const containerRef = useRef<HTMLDivElement>(null)
+  // Lifetime count, not this-week: the onboarding hint should not
+  // reappear every Monday for established users. null = still loading.
+  const lifetimeEvents = useLiveQuery(() => db.events.count(), [], null as number | null)
 
   useEffect(
     () => () => {
@@ -51,12 +56,17 @@ export function BuzzerView() {
 
   const handleCloseModal = useCallback(() => {
     setDetailsEventId(null)
+    // The snackbar button that opened the modal is long gone — hand focus
+    // back to the buzzer instead of letting it drop to <body>.
+    requestAnimationFrame(() => {
+      containerRef.current?.querySelector<HTMLButtonElement>('button[aria-label^="Log tension"]')?.focus()
+    })
   }, [])
 
   const isMulti = persons.length > 1
 
   return (
-    <div class={styles.container}>
+    <div class={styles.container} ref={containerRef}>
       {isMulti ? (
         <div class={styles.multiBuzzerRow}>
           {persons.map((person) => {
@@ -86,7 +96,7 @@ export function BuzzerView() {
         )
       )}
 
-      {!hasAnyEvents && !lastLoggedId && (
+      {lifetimeEvents === 0 && !lastLoggedId && (
         <p class={styles.firstRunHint}>
           Feeling tension? Tap the buzzer to log it — one tap, done.
           <br />

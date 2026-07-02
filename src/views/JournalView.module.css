@@ -19,14 +19,6 @@
 }
 
 .reviewCard {
-  /* A tappable card that opens that week's stats. */
-  display: block;
-  width: 100%;
-  text-align: left;
-  font: inherit;
-  color: inherit;
-  border: none;
-  cursor: pointer;
   background: var(--color-bg-surface);
   border-radius: var(--radius-md);
   padding: var(--space-lg);
@@ -34,10 +26,21 @@
 }
 
 .reviewHeader {
+  /* The header row is the button that opens that week's stats. */
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-md);
   margin-bottom: var(--space-md);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-height: 44px;
 }
 
 .weekLabel {

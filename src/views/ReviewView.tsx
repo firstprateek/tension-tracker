@@ -71,6 +71,9 @@ export function ReviewView({ onDone }: ReviewViewProps) {
 
   return (
     <div class={styles.container}>
+      <button class={styles.closeBtn} onClick={onDone} aria-label="Close review without saving">
+        ✕
+      </button>
       <div class={styles.dots}>
         {[0, 1, 2, 3].map((i) => (
           <div key={i} class={`${styles.dot} ${i === step ? styles.active : ''}`} />

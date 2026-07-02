@@ -48,18 +48,19 @@ export function JournalView({ onOpenWeek }: JournalViewProps) {
             .slice(0, 5)
 
           return (
-            <button
-              class={styles.reviewCard}
-              key={review.weekId}
-              onClick={() => onOpenWeek?.(review.weekId)}
-              aria-label={`Open stats for ${formatWeekRange(review.weekId)}`}
-            >
-              <div class={styles.reviewHeader}>
+            <div class={styles.reviewCard} key={review.weekId}>
+              {/* Only the header is the button — the rest of the card stays
+                  static content so screen readers still get tags/notes. */}
+              <button
+                class={styles.reviewHeader}
+                onClick={() => onOpenWeek?.(review.weekId)}
+                aria-label={`Open stats for ${formatWeekRange(review.weekId)}`}
+              >
                 <span class={styles.weekLabel}>{formatWeekRange(review.weekId)}</span>
                 <span class={styles.eventCount}>
                   {totalEvents} event{totalEvents !== 1 ? 's' : ''} ›
                 </span>
-              </div>
+              </button>
 
               {review.personSummaries.length > 1 && (
                 <div class={styles.statsRow}>
@@ -89,7 +90,7 @@ export function JournalView({ onOpenWeek }: JournalViewProps) {
                   <div class={styles.countermeasuresText}>{review.countermeasures}</div>
                 </>
               )}
-            </button>
+            </div>
           )
         })
       )}
