@@ -13,8 +13,18 @@ export function WeekChart({ dailyCounts, color = 'var(--color-accent)' }: WeekCh
   const countWidth = 30
   const svgHeight = dailyCounts.length * (barHeight + gap) - gap
 
+  const summary = `Daily tension counts: ${dailyCounts.map((d) => `${d.day} ${d.count}`).join(', ')}`
+
   return (
-    <svg width="100%" height={svgHeight} viewBox={`0 0 300 ${svgHeight}`} preserveAspectRatio="xMidYMid meet">
+    <svg
+      width="100%"
+      height={svgHeight}
+      viewBox={`0 0 300 ${svgHeight}`}
+      preserveAspectRatio="xMidYMid meet"
+      role="img"
+      aria-label={summary}
+    >
+      <title>{summary}</title>
       {dailyCounts.map((d, i) => {
         const y = i * (barHeight + gap)
         const barWidth = (d.count / maxCount) * (300 - labelWidth - countWidth - 16)

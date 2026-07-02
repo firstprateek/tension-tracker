@@ -112,6 +112,7 @@ export function ReviewView({ onDone }: ReviewViewProps) {
             <textarea
               class={styles.textarea}
               placeholder="e.g., Set boundaries at work, take walks after lunch..."
+              aria-label="Countermeasures for next week"
               value={countermeasures}
               onInput={(e) => setCountermeasures((e.target as HTMLTextAreaElement).value)}
             />
@@ -144,7 +145,7 @@ export function ReviewView({ onDone }: ReviewViewProps) {
               Back
             </button>
             <button class={styles.nextBtn} onClick={handleComplete}>
-              Back to Buzzer
+              Save &amp; Finish
             </button>
           </div>
         </>

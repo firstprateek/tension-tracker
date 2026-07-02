@@ -52,6 +52,7 @@ export function TagPicker({ presetTags, selectedTags, onToggleTag, onAddCustomTa
           class={styles.addTagInput}
           type="text"
           placeholder="+ Add tag..."
+          aria-label="Add a custom tag"
           value={customTag}
           onInput={(e) => setCustomTag((e.target as HTMLInputElement).value)}
           onKeyDown={handleKeyDown}

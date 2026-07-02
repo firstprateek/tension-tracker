@@ -4,8 +4,10 @@
   --color-bg-surface: #16213e;
   --color-bg-elevated: #0f3460;
   --color-text: #e8e8e8;
-  --color-text-muted: #8a8a9a;
+  --color-text-muted: #a0a0b0; /* ≥4.5:1 on all surfaces */
   --color-accent: #e94560;
+  --color-accent-strong: #d23350; /* button bg: ≥4.5:1 under white text */
+  --color-accent-text: #f06a80; /* accent-colored text on dark surfaces */
   --color-accent-glow: rgba(233, 69, 96, 0.3);
   --color-success: #4ade80;
   --color-warning: #fbbf24;

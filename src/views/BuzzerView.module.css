@@ -79,7 +79,7 @@
 .snackbarBtn {
   background: none;
   border: none;
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   font-size: var(--font-size-sm);
   font-weight: 600;
   cursor: pointer;

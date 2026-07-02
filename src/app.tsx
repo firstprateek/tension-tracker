@@ -35,8 +35,6 @@ export function App() {
 
   if (!ready) return null
 
-  const activeNav: Route = view === 'review' ? 'stats' : view
-
   return (
     <>
       {view === 'buzzer' && <BuzzerView />}
@@ -44,7 +42,9 @@ export function App() {
       {view === 'review' && <ReviewView onDone={handleReviewDone} />}
       {view === 'journal' && <JournalView />}
       {view === 'settings' && <SettingsView />}
-      <NavBar active={activeNav} onNavigate={handleNavigate} />
+      {/* The review is a focused full-screen flow — no tab bar, so no
+          falsely-highlighted tab and no accidental mid-review exits. */}
+      {view !== 'review' && <NavBar active={view} onNavigate={handleNavigate} />}
     </>
   )
 }

@@ -35,9 +35,10 @@ export function SettingsView() {
     setEditingId(null)
   }, [editingId, editName])
 
-  const handleDeletePerson = useCallback(async (id: string) => {
-    if (id === 'default') return
-    await deletePerson(id)
+  const handleDeletePerson = useCallback(async (person: Person) => {
+    if (person.id === 'default') return
+    if (!confirm(`Delete ${person.name} and all their logged tensions?`)) return
+    await deletePerson(person.id)
   }, [])
 
   const handleRemoveTag = useCallback(
@@ -134,22 +135,27 @@ export function SettingsView() {
                 <input
                   class={styles.personInput}
                   value={editName}
+                  aria-label="Person name"
                   onInput={(e) => setEditName((e.target as HTMLInputElement).value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
                   autofocus
                 />
-                <button class={styles.iconBtn} onClick={handleSaveEdit}>
+                <button class={styles.iconBtn} onClick={handleSaveEdit} aria-label="Save name">
                   &#10003;
                 </button>
               </>
             ) : (
               <>
                 <span class={styles.personName}>{person.name}</span>
-                <button class={styles.iconBtn} onClick={() => handleStartEdit(person)}>
+                <button class={styles.iconBtn} onClick={() => handleStartEdit(person)} aria-label={`Edit ${person.name}`}>
                   &#9998;
                 </button>
                 {person.id !== 'default' && (
-                  <button class={`${styles.iconBtn} ${styles.deleteBtn}`} onClick={() => handleDeletePerson(person.id)}>
+                  <button
+                    class={`${styles.iconBtn} ${styles.deleteBtn}`}
+                    onClick={() => handleDeletePerson(person)}
+                    aria-label={`Delete ${person.name}`}
+                  >
                     &#10005;
                   </button>
                 )}
@@ -170,7 +176,7 @@ export function SettingsView() {
           {settings.presetTags.map((tag) => (
             <span class={styles.tag} key={tag}>
               {tag}
-              <button class={styles.tagRemove} onClick={() => handleRemoveTag(tag)}>
+              <button class={styles.tagRemove} onClick={() => handleRemoveTag(tag)} aria-label={`Remove tag ${tag}`}>
                 &#10005;
               </button>
             </span>
@@ -180,6 +186,7 @@ export function SettingsView() {
           <input
             class={styles.addTagInput}
             placeholder="Add tag..."
+            aria-label="Add tag"
             value={newTag}
             onInput={(e) => setNewTag((e.target as HTMLInputElement).value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}

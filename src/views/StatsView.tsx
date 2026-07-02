@@ -50,11 +50,11 @@ export function StatsView({ onNavigateReview }: StatsViewProps) {
   return (
     <div class={styles.container}>
       <div class={styles.header}>
-        <button class={styles.navBtn} onClick={handlePrev}>
+        <button class={styles.navBtn} onClick={handlePrev} aria-label="Previous week">
           ‹
         </button>
         <div class={styles.weekLabel}>{formatWeekRange(weekId)}</div>
-        <button class={styles.navBtn} onClick={handleNext} disabled={isCurrentWeek}>
+        <button class={styles.navBtn} onClick={handleNext} disabled={isCurrentWeek} aria-label="Next week">
           ›
         </button>
       </div>
@@ -111,9 +111,9 @@ export function StatsView({ onNavigateReview }: StatsViewProps) {
       )}
 
       {showReviewBanner && onNavigateReview && (
-        <div class={styles.reviewBanner} onClick={onNavigateReview}>
-          <div class={styles.reviewBannerText}>Time to review your week</div>
-        </div>
+        <button class={styles.reviewBanner} onClick={onNavigateReview}>
+          <span class={styles.reviewBannerText}>Time to review your week</span>
+        </button>
       )}
     </div>
   )

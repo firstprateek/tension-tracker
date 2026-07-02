@@ -7,37 +7,29 @@ interface NavBarProps {
   onNavigate: (route: Route) => void
 }
 
+const TABS: { route: Route; icon: string; label: string }[] = [
+  { route: 'buzzer', icon: '⚠', label: 'Buzzer' },
+  { route: 'stats', icon: '▂▅▇', label: 'Stats' },
+  { route: 'journal', icon: '✎', label: 'Journal' },
+  { route: 'settings', icon: '⚙', label: 'Settings' },
+]
+
 export function NavBar({ active, onNavigate }: NavBarProps) {
   return (
     <nav class={styles.nav}>
-      <button
-        class={`${styles.tab} ${active === 'buzzer' ? styles.active : ''}`}
-        onClick={() => onNavigate('buzzer')}
-      >
-        <span class={styles.tabIcon}>&#9888;</span>
-        Buzzer
-      </button>
-      <button
-        class={`${styles.tab} ${active === 'stats' ? styles.active : ''}`}
-        onClick={() => onNavigate('stats')}
-      >
-        <span class={styles.tabIcon}>&#9776;</span>
-        Stats
-      </button>
-      <button
-        class={`${styles.tab} ${active === 'journal' ? styles.active : ''}`}
-        onClick={() => onNavigate('journal')}
-      >
-        <span class={styles.tabIcon}>&#9998;</span>
-        Journal
-      </button>
-      <button
-        class={`${styles.tab} ${active === 'settings' ? styles.active : ''}`}
-        onClick={() => onNavigate('settings')}
-      >
-        <span class={styles.tabIcon}>&#9881;</span>
-        Settings
-      </button>
+      {TABS.map(({ route, icon, label }) => (
+        <button
+          key={route}
+          class={`${styles.tab} ${active === route ? styles.active : ''}`}
+          aria-current={active === route ? 'page' : undefined}
+          onClick={() => onNavigate(route)}
+        >
+          <span class={styles.tabIcon} aria-hidden="true">
+            {icon}
+          </span>
+          {label}
+        </button>
+      ))}
     </nav>
   )
 }

@@ -144,7 +144,7 @@
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
   border: none;
-  background: var(--color-accent);
+  background: var(--color-accent-strong);
   color: white;
   cursor: pointer;
 }
