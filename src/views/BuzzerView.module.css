@@ -29,3 +29,57 @@
   align-items: center;
   gap: var(--space-sm);
 }
+
+.firstRunHint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.snackbar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--nav-height) + var(--safe-area-bottom) + var(--space-md));
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-full);
+  padding: var(--space-xs) var(--space-sm) var(--space-xs) var(--space-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  animation: snackbarIn var(--transition-spring);
+  z-index: 50;
+  white-space: nowrap;
+}
+
+@keyframes snackbarIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.snackbarLabel {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  margin-right: var(--space-xs);
+}
+
+.snackbarBtn {
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--space-sm) var(--space-sm);
+  min-height: 44px;
+  border-radius: var(--radius-full);
+}

@@ -1,25 +1,56 @@
-import { useState, useCallback } from 'preact/hooks'
+import { useState, useCallback, useEffect, useRef } from 'preact/hooks'
 import { Buzzer } from '../components/Buzzer.tsx'
 import { TaggingModal } from './TaggingModal.tsx'
 import { usePersons } from '../hooks/usePersons.ts'
 import { useWeekEvents } from '../hooks/useWeekEvents.ts'
 import { useCurrentWeekId } from '../hooks/useCurrentWeekId.ts'
-import { addEvent } from '../db/events.ts'
+import { addEvent, deleteEvent } from '../db/events.ts'
 import styles from './BuzzerView.module.css'
+
+const SNACKBAR_MS = 6_000
 
 export function BuzzerView() {
   const persons = usePersons()
   const weekId = useCurrentWeekId()
   const events = useWeekEvents(weekId)
-  const [activeEventId, setActiveEventId] = useState<string | null>(null)
+  // Logging is one tap: the event is saved immediately on press. The
+  // snackbar then offers optional detail-tagging or undo, out of the way.
+  const [lastLoggedId, setLastLoggedId] = useState<string | null>(null)
+  const [detailsEventId, setDetailsEventId] = useState<string | null>(null)
+  const snackbarTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hasAnyEvents = events.length > 0
+
+  useEffect(
+    () => () => {
+      if (snackbarTimer.current) clearTimeout(snackbarTimer.current)
+    },
+    [],
+  )
+
+  const dismissSnackbar = useCallback(() => {
+    if (snackbarTimer.current) clearTimeout(snackbarTimer.current)
+    setLastLoggedId(null)
+  }, [])
 
   const handlePress = useCallback(async (personId: string) => {
     const id = await addEvent(personId)
-    setActiveEventId(id)
+    setLastLoggedId(id)
+    if (snackbarTimer.current) clearTimeout(snackbarTimer.current)
+    snackbarTimer.current = setTimeout(() => setLastLoggedId(null), SNACKBAR_MS)
   }, [])
 
+  const handleUndo = useCallback(async () => {
+    if (lastLoggedId) await deleteEvent(lastLoggedId)
+    dismissSnackbar()
+  }, [lastLoggedId, dismissSnackbar])
+
+  const handleAddDetails = useCallback(() => {
+    setDetailsEventId(lastLoggedId)
+    dismissSnackbar()
+  }, [lastLoggedId, dismissSnackbar])
+
   const handleCloseModal = useCallback(() => {
-    setActiveEventId(null)
+    setDetailsEventId(null)
   }, [])
 
   const isMulti = persons.length > 1
@@ -55,7 +86,27 @@ export function BuzzerView() {
         )
       )}
 
-      {activeEventId && <TaggingModal eventId={activeEventId} onClose={handleCloseModal} />}
+      {!hasAnyEvents && !lastLoggedId && (
+        <p class={styles.firstRunHint}>
+          Feeling tension? Tap the buzzer to log it — one tap, done.
+          <br />
+          Review your patterns later in Stats.
+        </p>
+      )}
+
+      {lastLoggedId && (
+        <div class={styles.snackbar} role="status">
+          <span class={styles.snackbarLabel}>Logged ✓</span>
+          <button class={styles.snackbarBtn} onClick={handleAddDetails}>
+            Add details
+          </button>
+          <button class={styles.snackbarBtn} onClick={handleUndo}>
+            Undo
+          </button>
+        </div>
+      )}
+
+      {detailsEventId && <TaggingModal eventId={detailsEventId} onClose={handleCloseModal} />}
     </div>
   )
 }

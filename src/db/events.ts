@@ -21,6 +21,10 @@ export async function updateEvent(id: string, updates: Partial<Pick<TensionEvent
   await db.events.update(id, updates)
 }
 
+export async function deleteEvent(id: string): Promise<void> {
+  await db.events.delete(id)
+}
+
 export async function getEventsForWeek(weekId: string): Promise<TensionEvent[]> {
   return db.events.where('weekId').equals(weekId).toArray()
 }
