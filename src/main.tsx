@@ -22,6 +22,29 @@ style.textContent = `
   }
   #app {
     min-height: 100%;
+    padding-top: var(--safe-area-top);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 2px;
+  }
+  button {
+    transition: transform var(--transition-fast), filter var(--transition-fast), color var(--transition-fast);
+  }
+  button:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) {
+    button:hover {
+      filter: brightness(1.12);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 `
 document.head.appendChild(style)

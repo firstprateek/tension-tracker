@@ -2,9 +2,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* Bias the buzzer toward the lower third — one-handed thumb reach. */
+  justify-content: flex-end;
   min-height: calc(100vh - var(--nav-height) - var(--safe-area-bottom));
+  /* dvh avoids the iOS Safari toolbar-overflow bug. */
+  min-height: calc(100dvh - var(--nav-height) - var(--safe-area-bottom));
   padding: var(--space-lg);
+  padding-bottom: max(12vh, var(--space-2xl));
   gap: var(--space-lg);
 }
 

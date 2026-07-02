@@ -4,6 +4,7 @@
   max-width: 500px;
   margin: 0 auto;
   min-height: calc(100vh - var(--nav-height) - var(--safe-area-bottom));
+  min-height: calc(100dvh - var(--nav-height) - var(--safe-area-bottom));
   display: flex;
   flex-direction: column;
 }

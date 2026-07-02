@@ -26,6 +26,8 @@
   font-size: var(--font-size-xl);
   cursor: pointer;
   padding: var(--space-sm);
+  min-width: 44px;
+  min-height: 44px;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -105,7 +107,8 @@
 }
 
 .personBtn {
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 44px;
   border-radius: var(--radius-full);
   border: 1px solid var(--color-text-muted);
   background: transparent;

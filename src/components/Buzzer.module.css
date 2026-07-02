@@ -24,7 +24,9 @@
   box-shadow: 0 0 40px var(--glow-color, rgba(233, 69, 96, 0.3));
 }
 
-.buzzer:active {
+button.buzzer:active {
+  /* Extra specificity so the buzzer's stronger press beats the global
+     button:active scale. */
   transform: scale(0.92);
 }
 
