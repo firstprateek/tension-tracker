@@ -3,13 +3,13 @@ import { Buzzer } from '../components/Buzzer.tsx'
 import { TaggingModal } from './TaggingModal.tsx'
 import { usePersons } from '../hooks/usePersons.ts'
 import { useWeekEvents } from '../hooks/useWeekEvents.ts'
-import { getCurrentWeekId } from '../lib/week.ts'
+import { useCurrentWeekId } from '../hooks/useCurrentWeekId.ts'
 import { addEvent } from '../db/events.ts'
 import styles from './BuzzerView.module.css'
 
 export function BuzzerView() {
   const persons = usePersons()
-  const weekId = getCurrentWeekId()
+  const weekId = useCurrentWeekId()
   const events = useWeekEvents(weekId)
   const [activeEventId, setActiveEventId] = useState<string | null>(null)
 

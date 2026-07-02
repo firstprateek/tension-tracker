@@ -38,8 +38,11 @@ export function useWeekStats(events: TensionEvent[], weekId: string): WeekStats 
 export function computeWeekStats(events: TensionEvent[], weekId: string): WeekStats {
   const { start, end } = getWeekBounds(weekId)
   const now = new Date()
-  const effectiveEnd = now < end ? now : end
-  const hoursElapsed = Math.max(1, (effectiveEnd.getTime() - start.getTime()) / 3600000)
+  // Completed weeks are always exactly 7×24h — wall-clock deltas are ±1h
+  // off during DST-transition weeks. Only the in-progress week is partial.
+  const hoursElapsed = now >= end
+    ? 168
+    : Math.max(1, (now.getTime() - start.getTime()) / 3600000)
 
   const totalEvents = events.length
   const tensionPerHour = totalEvents / hoursElapsed

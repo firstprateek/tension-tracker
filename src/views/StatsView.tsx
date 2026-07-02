@@ -1,10 +1,11 @@
-import { useState, useCallback } from 'preact/hooks'
+import { useState, useCallback, useEffect } from 'preact/hooks'
 import { StatCard } from '../components/StatCard.tsx'
 import { WeekChart } from '../components/WeekChart.tsx'
 import { useWeekEvents } from '../hooks/useWeekEvents.ts'
 import { useWeekStats } from '../hooks/useWeekStats.ts'
 import { usePersons } from '../hooks/usePersons.ts'
-import { getCurrentWeekId, getPreviousWeekId, getNextWeekId, formatWeekRange } from '../lib/week.ts'
+import { useCurrentWeekId } from '../hooks/useCurrentWeekId.ts'
+import { getPreviousWeekId, getNextWeekId, formatWeekRange } from '../lib/week.ts'
 import { useLiveQuery } from '../hooks/useLiveQuery.ts'
 import { db } from '../db/index.ts'
 import styles from './StatsView.module.css'
@@ -14,11 +15,19 @@ interface StatsViewProps {
 }
 
 export function StatsView({ onNavigateReview }: StatsViewProps) {
-  const currentWeekId = getCurrentWeekId()
+  const currentWeekId = useCurrentWeekId()
   const [weekId, setWeekId] = useState(currentWeekId)
   const [personFilter, setPersonFilter] = useState<string | null>(null)
   const events = useWeekEvents(weekId)
   const persons = usePersons()
+
+  // If the filtered person is deleted, fall back to "All" instead of a
+  // permanently empty week.
+  useEffect(() => {
+    if (personFilter && persons.length > 0 && !persons.some((p) => p.id === personFilter)) {
+      setPersonFilter(null)
+    }
+  }, [personFilter, persons])
   const stats = useWeekStats(
     personFilter ? events.filter((e) => e.personId === personFilter) : events,
     weekId,

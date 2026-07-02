@@ -10,12 +10,31 @@ export function getWeekId(date: Date): string {
 }
 
 /**
+ * Number of ISO weeks in a given ISO year (52 or 53).
+ * Dec 28 is always in the last ISO week of its year.
+ */
+export function weeksInISOYear(year: number): number {
+  const id = getWeekId(new Date(year, 11, 28))
+  return parseInt(id.split('-W')[1], 10)
+}
+
+/**
  * Get the start (Monday 00:00) and end (Sunday 23:59:59.999) of an ISO week.
+ * Malformed or out-of-range weekIds are clamped to a valid week rather than
+ * silently producing Invalid Dates.
  */
 export function getWeekBounds(weekId: string): { start: Date; end: Date } {
   const [yearStr, weekStr] = weekId.split('-W')
-  const year = parseInt(yearStr, 10)
-  const week = parseInt(weekStr, 10)
+  let year = parseInt(yearStr, 10)
+  let week = parseInt(weekStr, 10)
+
+  if (Number.isNaN(year)) {
+    // Unparsable id — fall back to the current week.
+    return getWeekBounds(getWeekId(new Date()))
+  }
+  const maxWeek = weeksInISOYear(year)
+  if (Number.isNaN(week) || week < 1) week = 1
+  else if (week > maxWeek) week = maxWeek
 
   // Jan 4 is always in week 1 of the ISO year
   const jan4 = new Date(year, 0, 4)
@@ -70,6 +89,9 @@ export function formatWeekRange(weekId: string): string {
   const startMonth = monthNames[start.getMonth()]
   const endMonth = monthNames[end.getMonth()]
 
+  if (start.getFullYear() !== end.getFullYear()) {
+    return `${startMonth} ${start.getDate()}, ${start.getFullYear()} – ${endMonth} ${end.getDate()}, ${end.getFullYear()}`
+  }
   if (start.getMonth() === end.getMonth()) {
     return `${startMonth} ${start.getDate()} – ${end.getDate()}, ${start.getFullYear()}`
   }

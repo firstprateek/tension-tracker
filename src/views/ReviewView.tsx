@@ -14,7 +14,9 @@ interface ReviewViewProps {
 }
 
 export function ReviewView({ onDone }: ReviewViewProps) {
-  const weekId = getCurrentWeekId()
+  // Capture once on mount: a review in progress should keep targeting the
+  // week it was opened for, even if midnight Sun→Mon passes mid-flow.
+  const [weekId] = useState(getCurrentWeekId)
   const events = useWeekEvents(weekId)
   const stats = useWeekStats(events, weekId)
   const persons = usePersons()
