@@ -44,3 +44,7 @@ npm run build      # typecheck + production build
 ```bash
 git push origin main   # tests gate the deploy automatically
 ```
+
+## License
+
+[MIT](LICENSE) © 2026 Prateek Joshi
